@@ -2,118 +2,42 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 /// Creates an Icon Widget that works for non-material Icons, such as the
 /// Font Awesome Icons.
 ///
-/// The default `Icon` Widget from the Material package assumes all Icons are
+/// The default [Icon] Widget from the Material package assumes all Icons are
 /// square in size and wraps all Icons in a square SizedBox Widget. Icons from
 /// the FontAwesome package are often wider than they are tall, which causes
 /// alignment and cutoff issues.
 ///
 /// This Widget does not wrap the icons in a fixed square box, which allows the
 /// icons to render based on their size.
-class FaIcon extends StatelessWidget {
+///
+/// This is basically a copy of flutter's original `Icon` widget, but with the
+/// `SizedBox` and `Center` widgets removed.
+///
+/// Original source code:
+/// https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/widgets/icon.dart
+class FaIcon extends Icon {
   /// Creates an icon.
-  ///
-  /// The [size] and [color] default to the value given by the current [IconTheme].
   const FaIcon(
-    this.icon, {
+    super.icon, {
     super.key,
-    this.size,
-    this.color,
-    this.semanticLabel,
-    this.textDirection,
-    this.shadows,
+    super.size,
+    super.fill,
+    super.weight,
+    super.grade,
+    super.opticalSize,
+    super.color,
+    super.shadows,
+    super.semanticLabel,
+    super.textDirection,
+    super.applyTextScaling,
+    super.blendMode,
+    super.fontWeight,
   });
-
-  /// The icon to display. Available icons are listed in [FontAwesomeIcons].
-  ///
-  /// The icon can be null, in which case the widget will render as an empty
-  /// space of the specified [size].
-  final IconData? icon;
-
-  /// The size of the icon in logical pixels.
-  ///
-  /// Icons occupy a square with width and height equal to size.
-  ///
-  /// Defaults to the current [IconTheme] size, if any. If there is no
-  /// [IconTheme], or it does not specify an explicit size, then it defaults to
-  /// 24.0.
-  ///
-  /// If this [Icon] is being placed inside an [IconButton], then use
-  /// [IconButton.iconSize] instead, so that the [IconButton] can make the splash
-  /// area the appropriate size as well. The [IconButton] uses an [IconTheme] to
-  /// pass down the size to the [FaIcon].
-  final double? size;
-
-  /// The color to use when drawing the icon.
-  ///
-  /// Defaults to the current [IconTheme] color, if any.
-  ///
-  /// The color (whether specified explicitly here or obtained from the
-  /// [IconTheme]) will be further adjusted by the opacity of the current
-  /// [IconTheme], if any.
-  ///
-  /// In material apps, if there is a [Theme] without any [IconTheme]s
-  /// specified, icon colors default to white if the theme is dark
-  /// and black if the theme is light.
-  ///
-  /// If no [IconTheme] and no [Theme] is specified, icons will default to
-  /// black.
-  ///
-  /// See [Theme] to set the current theme and [ThemeData.brightness]
-  /// for setting the current theme's brightness.
-  ///
-  /// {@tool snippet}
-  /// Typically, a Material Design color will be used, as follows:
-  ///
-  /// ```dart
-  /// Icon(
-  ///   Icons.widgets,
-  ///   color: Colors.blue.shade400,
-  /// )
-  /// ```
-  /// {@end-tool}
-  final Color? color;
-
-  /// Semantic label for the icon.
-  ///
-  /// Announced in accessibility modes (e.g TalkBack/VoiceOver).
-  /// This label does not show in the UI.
-  ///
-  ///  * [SemanticsProperties.label], which is set to [semanticLabel] in the
-  ///    underlying	 [Semantics] widget.
-  final String? semanticLabel;
-
-  /// The text direction to use for rendering the icon.
-  ///
-  /// If this is null, the ambient [Directionality] is used instead.
-  ///
-  /// Some icons follow the reading direction. For example, "back" buttons point
-  /// left in left-to-right environments and right in right-to-left
-  /// environments. Such icons have their [IconData.matchTextDirection] field
-  /// set to true, and the [Icon] widget uses the [textDirection] to determine
-  /// the orientation in which to draw the icon.
-  ///
-  /// This property has no effect if the [icon]'s [IconData.matchTextDirection]
-  /// field is false, but for consistency a text direction value must always be
-  /// specified, either directly using this property or using [Directionality].
-  final TextDirection? textDirection;
-
-  /// A list of [Shadow]s that will be painted underneath the icon.
-  ///
-  /// Multiple shadows are supported to replicate lighting from multiple light
-  /// sources.
-  ///
-  /// Shadows must be in the same order for [Icon] to be considered as
-  /// equivalent as order produces differing transparency.
-  ///
-  /// Defaults to the nearest [IconTheme]'s [IconThemeData.shadows].
-  final List<Shadow>? shadows;
 
   @override
   Widget build(BuildContext context) {
@@ -123,9 +47,26 @@ class FaIcon extends StatelessWidget {
 
     final IconThemeData iconTheme = IconTheme.of(context);
 
-    final double? iconSize = size ?? iconTheme.size;
+    final bool applyTextScaling =
+        this.applyTextScaling ?? iconTheme.applyTextScaling ?? false;
+
+    final double tentativeIconSize = size ?? iconTheme.size ?? kDefaultFontSize;
+
+    final double iconSize = applyTextScaling
+        ? MediaQuery.textScalerOf(context).scale(tentativeIconSize)
+        : tentativeIconSize;
+
+    final double? iconFill = fill ?? iconTheme.fill;
+
+    final double? iconWeight = weight ?? iconTheme.weight;
+
+    final double? iconGrade = grade ?? iconTheme.grade;
+
+    final double? iconOpticalSize = opticalSize ?? iconTheme.opticalSize;
+
     final List<Shadow>? iconShadows = shadows ?? iconTheme.shadows;
 
+    final IconData? icon = this.icon;
     if (icon == null) {
       return Semantics(
         label: semanticLabel,
@@ -134,39 +75,59 @@ class FaIcon extends StatelessWidget {
     }
 
     final double iconOpacity = iconTheme.opacity ?? 1.0;
-    Color iconColor = color ?? iconTheme.color!;
+    Color? iconColor = color ?? iconTheme.color!;
+    Paint? foreground;
     if (iconOpacity != 1.0) {
-      iconColor = iconColor.withOpacity(iconColor.opacity * iconOpacity);
+      iconColor = iconColor.withValues(alpha: iconColor.a * iconOpacity);
+    }
+    if (blendMode != null) {
+      foreground = Paint()
+        ..blendMode = blendMode!
+        ..color = iconColor;
+      // Cannot provide both a color and a foreground.
+      iconColor = null;
     }
 
+    final TextStyle fontStyle = TextStyle(
+      fontVariations: <FontVariation>[
+        if (iconFill != null) FontVariation('FILL', iconFill),
+        if (iconWeight != null) FontVariation('wght', iconWeight),
+        if (iconGrade != null) FontVariation('GRAD', iconGrade),
+        if (iconOpticalSize != null) FontVariation('opsz', iconOpticalSize),
+      ],
+      inherit: false,
+      color: iconColor,
+      fontSize: iconSize,
+      fontFamily: icon.fontFamily,
+      fontWeight: fontWeight,
+      package: icon.fontPackage,
+      fontFamilyFallback: icon.fontFamilyFallback,
+      shadows: iconShadows,
+      height:
+          1.0, // Makes sure the font's body is vertically centered within the iconSize x iconSize square.
+      leadingDistribution: TextLeadingDistribution.even,
+      foreground: foreground,
+    );
+
     Widget iconWidget = RichText(
-      overflow: TextOverflow.visible,
-      // Never clip.
-      textDirection: textDirection,
-      // Since we already fetched it for the assert...
+      overflow: TextOverflow.visible, // Never clip.
+      textDirection:
+          textDirection, // Since we already fetched it for the assert...
       text: TextSpan(
-        text: String.fromCharCode(icon!.codePoint),
-        style: TextStyle(
-          inherit: false,
-          color: iconColor,
-          fontSize: iconSize,
-          fontFamily: icon!.fontFamily,
-          package: icon!.fontPackage,
-          shadows: iconShadows,
-        ),
+        text: String.fromCharCode(icon.codePoint),
+        style: fontStyle,
       ),
     );
 
-    if (icon!.matchTextDirection) {
+    if (icon.matchTextDirection) {
       switch (textDirection) {
         case TextDirection.rtl:
           iconWidget = Transform(
-            transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
+            transform: Matrix4.identity()..scaleByDouble(-1.0, 1.0, 1.0, 1),
             alignment: Alignment.center,
             transformHitTests: false,
             child: iconWidget,
           );
-          break;
         case TextDirection.ltr:
           break;
       }
@@ -174,20 +135,7 @@ class FaIcon extends StatelessWidget {
 
     return Semantics(
       label: semanticLabel,
-      child: ExcludeSemantics(
-        child: iconWidget,
-      ),
+      child: ExcludeSemantics(child: iconWidget),
     );
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(
-        IconDataProperty('icon', icon, ifNull: '<empty>', showName: false));
-    properties.add(DoubleProperty('size', size, defaultValue: null));
-    properties.add(ColorProperty('color', color, defaultValue: null));
-    properties
-        .add(IterableProperty<Shadow>('shadows', shadows, defaultValue: null));
   }
 }

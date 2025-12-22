@@ -1,3 +1,7 @@
+<p align="right">
+<a href="https://flutter.dev/docs/development/packages-and-plugins/favorites"><img src="https://raw.githubusercontent.com/fluttercommunity/font_awesome_flutter/master/assets/pub/flutter_favorite.png" width="100" alt="Flutter Favorite"></a>
+</p>
+
 # font_awesome_flutter 
 
 [![Flutter Community: font_awesome_flutter](https://fluttercommunity.dev/_github/header/font_awesome_flutter)](https://github.com/fluttercommunity/community)
@@ -5,7 +9,7 @@
 [![Pub](https://img.shields.io/pub/v/font_awesome_flutter.svg)](https://pub.dartlang.org/packages/font_awesome_flutter)
 
 The *free* [Font Awesome](https://fontawesome.com/icons) Icon pack available 
-as set of Flutter Icons - based on font awesome version 6.6.0.
+as set of Flutter Icons - based on font awesome version 7.1.0.
 
 This icon pack includes only the *free* icons offered by Font Awesome out-of-the-box.
 If you have purchased the pro icons and want to enable support for them, please see the instructions below.
@@ -87,11 +91,12 @@ to keep these files private. This includes **not** uploading your package to
 a public github repository or other public file sharing services.
 
 * Go to the location of your custom font_awesome_flutter version (see [setup](#setup))
-* Download the web version of font awesome pro and open it
-* Move **all** `.ttf` files from the `webfonts` directory and `icons.json` from `metadata` to
-  `path/to/your/font_awesome_flutter/lib/fonts`. Replace existing files. 
-  Newer versions might have an `icon-families.json`.  If this is the case, 
-  move its contents to `path/to/your/font_awesome_flutter/lib/fonts/icons.json`.
+* Download the desktop version of font awesome pro and open it
+* Move **all** `.otf` files from the `otfs` directory and `icons.json` from `metadata` to
+  `path/to/your/font_awesome_flutter/lib/fonts`. Replace existing files.
+  * To prevent issues with the web and testing, make sure to **replace spaces in the filenames with dashes**.
+  * Newer versions might have an `icon-families.json`.  If this is the case, 
+    move its contents to `path/to/your/font_awesome_flutter/lib/fonts/icons.json`.
 * Run the configurator. It should say "Custom icons.json found"
 
 It may be required to run `flutter clean` in apps who use this version for changes to appear.
