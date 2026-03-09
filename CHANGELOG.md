@@ -1,3 +1,9 @@
+## 11.0.0-wip
+- **Breaking Change**: `FaIconData` no longer implements `IconData` to prevent rendering issues and to anticipate `IconData` being marked `final` (see [flutter/flutter#181342](https://github.com/flutter/flutter/issues/181342)).
+- **Breaking Change**: `FaIcon` now strictly requires `FaIconData`. Standard `Icon` widgets can no longer be used with Font Awesome icons.
+- **Breaking Change**: Test finders like `find.byIcon` now require accessing the underlying data: `find.byIcon(FontAwesomeIcons.foo.data)`.
+- Upgrade to Font Awesome 7.2.0 (automatic update via configurator).
+
 ## 10.12.0
 - Fix flutter lint warnings - thanks @adil192!
 - Upgrade to Font Awesome 7.1.0

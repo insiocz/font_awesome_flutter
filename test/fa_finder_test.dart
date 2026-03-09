@@ -9,13 +9,13 @@ void main() {
     await tester.pumpWidget(
       Directionality(textDirection: TextDirection.ltr, child: FaIcon(bullseye)),
     );
-    expect(find.byIcon(bullseye), findsOneWidget);
+    expect(find.byIcon(bullseye.data), findsOneWidget);
   });
 
   testWidgets('find.widgetWithIcon', (WidgetTester tester) async {
     await tester.pumpWidget(
       Directionality(textDirection: TextDirection.ltr, child: FaIcon(bullseye)),
     );
-    expect(find.widgetWithIcon(Directionality, bullseye), findsOneWidget);
+    expect(find.widgetWithIcon(Directionality, bullseye.data), findsOneWidget);
   });
 }
