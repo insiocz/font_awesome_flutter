@@ -4,6 +4,8 @@
 
 import 'package:flutter/widgets.dart';
 
+import 'package:font_awesome_flutter/src/icon_data.dart';
+
 /// Creates an Icon Widget that works for non-material Icons, such as the
 /// Font Awesome Icons.
 ///
@@ -21,9 +23,13 @@ import 'package:flutter/widgets.dart';
 /// Original source code:
 /// https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/widgets/icon.dart
 class FaIcon extends Icon {
+  /// The icon to display. The icon can be null, in which case the widget will
+  /// render as an empty space of the specified [size].
+  final FaIconData? _icon;
+
   /// Creates an icon.
   const FaIcon(
-    super.icon, {
+    FaIconData? icon, {
     super.key,
     super.size,
     super.fill,
@@ -37,7 +43,14 @@ class FaIcon extends Icon {
     super.applyTextScaling,
     super.blendMode,
     super.fontWeight,
-  });
+  })  : _icon = icon,
+        // We pass null to the super constructor because Dart does not allow
+        // accessing properties of a parameter (icon.data) in a const 
+        // constructor initializer. We override the 'icon' getter below instead.
+        super(null);
+
+  @override
+  IconData? get icon => _icon?.data;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +79,7 @@ class FaIcon extends Icon {
 
     final List<Shadow>? iconShadows = shadows ?? iconTheme.shadows;
 
-    final IconData? icon = this.icon;
+    final IconData? icon = _icon?.data;
     if (icon == null) {
       return Semantics(
         label: semanticLabel,
