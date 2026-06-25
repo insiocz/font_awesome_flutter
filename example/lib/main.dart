@@ -39,7 +39,9 @@ class FontAwesomeGalleryHomeState extends State<FontAwesomeGalleryHome> {
   @override
   Widget build(BuildContext context) {
     final filteredIcons = icons
-        .where((icon) => _searchTerm.isEmpty || icon.title.toLowerCase().contains(_searchTerm.toLowerCase()))
+        .where((icon) =>
+            _searchTerm.isEmpty ||
+            icon.title.toLowerCase().contains(_searchTerm.toLowerCase()))
         .toList();
 
     return Scaffold(
@@ -102,7 +104,7 @@ class FontAwesomeGalleryHomeState extends State<FontAwesomeGalleryHome> {
       title: const Text("Font Awesome Flutter Gallery"),
       actions: [
         IconButton(
-            icon: FaIcon(FontAwesomeIcons.magnifyingGlass),
+            icon: const FaIcon(FontAwesomeIcons.magnifyingGlass),
             onPressed: () {
               ModalRoute.of(context)?.addLocalHistoryEntry(
                 LocalHistoryEntry(
@@ -126,7 +128,7 @@ class FontAwesomeGalleryHomeState extends State<FontAwesomeGalleryHome> {
   AppBar _searchBar(BuildContext context) {
     return AppBar(
       leading: IconButton(
-        icon: FaIcon(FontAwesomeIcons.arrowLeft),
+        icon: const FaIcon(FontAwesomeIcons.arrowLeft),
         onPressed: () {
           setState(
             () {
